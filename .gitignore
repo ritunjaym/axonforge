@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+*.so
+
+# CUDA build artifacts
+*.cubin
+*.ptx
+*.o
+
+# Results (committed selectively)
+results/*.log
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+*.swp
+
+# Claude session context (internal use only)
+CLAUDE.md
