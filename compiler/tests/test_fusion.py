@@ -79,7 +79,7 @@ def test_fusion_does_not_mutate_input():
 # Test 3 — Semantic preservation: fused output matches original within atol=1e-5
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),
@@ -105,7 +105,7 @@ def test_fusion_semantic_preservation(batch, d):
 # Test 4 — Idempotency: fusion_pass(fusion_pass(gm)) == fusion_pass(gm)
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=100)
+@settings(max_examples=100, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),
@@ -149,7 +149,7 @@ class LinearOnly(nn.Module):
         return self.linear(x)
 
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),

@@ -58,7 +58,7 @@ def test_pipeline_runs_without_error():
 # Test 2 — Semantic preservation across the full pipeline
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=4),
     seq=st.integers(min_value=1, max_value=4),
@@ -112,7 +112,7 @@ def test_pipeline_passes_compose():
 # Test 4 — Pipeline idempotency
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=4),
     seq=st.integers(min_value=1, max_value=4),

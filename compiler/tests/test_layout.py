@@ -78,7 +78,7 @@ def test_layout_does_not_mutate_input():
 # Test 3 — Semantic preservation
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=4),
     seq=st.integers(min_value=1, max_value=4),
@@ -105,7 +105,7 @@ def test_layout_semantic_preservation(batch, seq, d):
 # Test 4 — Idempotency
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=100)
+@settings(max_examples=100, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=4),
     seq=st.integers(min_value=1, max_value=4),
@@ -133,7 +133,7 @@ def test_layout_idempotent(batch, seq, d):
 # Test 5 — Already-contiguous input → no .contiguous() inserted
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),

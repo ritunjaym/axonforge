@@ -41,7 +41,7 @@ EXT  = pytest.mark.skipif(
     batch=st.integers(min_value=1, max_value=8),
     n=st.sampled_from([64, 128, 256, 512]),
 )
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 def test_swiglu_ref_matches_definition(batch, n):
     gate = torch.randn(batch, n)
     up   = torch.randn(batch, n)

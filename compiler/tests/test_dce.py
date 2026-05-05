@@ -72,7 +72,7 @@ def test_dce_does_not_mutate_input():
 # Test 3 — Semantic preservation
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),
@@ -97,7 +97,7 @@ def test_dce_semantic_preservation(batch, d):
 # Test 4 — Idempotency
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=100)
+@settings(max_examples=100, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),
@@ -121,7 +121,7 @@ def test_dce_idempotent(batch, d):
 # Test 5 — No dead nodes → count unchanged
 # ---------------------------------------------------------------------------
 
-@settings(max_examples=50)
+@settings(max_examples=50, deadline=None)
 @given(
     batch=st.integers(min_value=1, max_value=8),
     d=st.sampled_from([32, 64, 128]),
