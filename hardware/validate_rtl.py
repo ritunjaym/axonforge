@@ -33,6 +33,63 @@ _RTL_DIR  = Path(__file__).parent / "rtl"
 # Public API
 # ---------------------------------------------------------------------------
 
+def run_random_suite(
+    n: int = 500,
+    seed: int = 42,
+    rows: int = 8,
+    cols: int = 8,
+    pipeline_stages: int = 0,
+    data_width: int = 16,
+) -> dict:
+    """
+    Runs n random co-simulation cases and returns a summary.
+
+    Each case: random INT16 A (rows×rows) and W (rows×cols), optional sparsity.
+    Returns:
+      {
+        "total":    int,     # = n
+        "passed":   int,     # cases with 0 deltas
+        "failed":   int,     # cases with >0 deltas
+        "failures": list,    # details of any failures
+      }
+    """
+    rng = np.random.default_rng(seed)
+    INT16_MAX = 32767
+
+    passed, failed, failures = 0, 0, []
+
+    for trial in range(n):
+        # Random test vector: INT16 values, 0–30% sparsity on activations
+        sparsity = rng.uniform(0.0, 0.3)
+        A_raw = rng.integers(-INT16_MAX, INT16_MAX + 1,
+                             size=(rows, rows), dtype=np.int32)
+        mask  = rng.random(size=(rows, rows)) > sparsity
+        A     = (A_raw * mask).astype(np.int32)
+        W     = rng.integers(-INT16_MAX, INT16_MAX + 1,
+                             size=(rows, cols), dtype=np.int32)
+
+        result = run_cosim(A, W, rows=rows, cols=cols,
+                           pipeline_stages=pipeline_stages,
+                           data_width=data_width)
+        if result["deltas"] == 0:
+            passed += 1
+        else:
+            failed += 1
+            failures.append({
+                "trial":  trial,
+                "deltas": result["deltas"],
+                "A":      A.tolist(),
+                "W":      W.tolist(),
+            })
+
+    return {
+        "total":    n,
+        "passed":   passed,
+        "failed":   failed,
+        "failures": failures,
+    }
+
+
 def run_cosim(
     A: np.ndarray,
     W: np.ndarray,
@@ -171,7 +228,8 @@ def _generate_testbench(
             )
     captures = "\n".join(capture_lines)
 
-    acc_width = 2 * data_width + 1
+    # 40 bits: safe for ROWS × INT16_MAX² without overflow
+    acc_width = 40
 
     return f"""`timescale 1ns/1ps
 module tb;

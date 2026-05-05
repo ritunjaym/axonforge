@@ -30,10 +30,13 @@
 // Single PE with pipeline registers on east and south outputs
 // ---------------------------------------------------------------------------
 
+// ACC_WIDTH must be wide enough to hold ROWS × INT16_MAX²:
+//   8 × (2^15-1)² ≈ 8.6×10⁹ requires 34-bit signed.
+//   Default 40 bits handles up to ROWS=256 without overflow.
 module pe #(
     parameter int DATA_WIDTH  = 16,
     parameter int PIPE_STAGES = 0,
-    parameter int ACC_WIDTH   = 2 * DATA_WIDTH + 1
+    parameter int ACC_WIDTH   = 40
 ) (
     input  logic                        clk,
     input  logic                        rst_n,
@@ -81,7 +84,8 @@ module systolic_array #(
     parameter int ROWS        = 8,
     parameter int COLS        = 8,
     parameter int DATA_WIDTH  = 16,
-    parameter int PIPE_STAGES = 0
+    parameter int PIPE_STAGES = 0,
+    parameter int ACC_WIDTH   = 40   // wide enough for ROWS × INT16_MAX²
 ) (
     input  logic                        clk,
     input  logic                        rst_n,
@@ -90,9 +94,8 @@ module systolic_array #(
     // Activation left edge: one value per row per cycle
     input  logic signed [DATA_WIDTH-1:0] act_in  [ROWS],
     // Partial sum bottom edge: output of the last row
-    output logic signed [2*DATA_WIDTH:0] sum_out [COLS]
+    output logic signed [ACC_WIDTH-1:0]  sum_out [COLS]
 );
-    localparam int ACC_WIDTH = 2 * DATA_WIDTH + 1;
 
     // Horizontal wires: act_wire[k][j] drives PE[k][j]'s act_in
     // act_wire[k][0] = act_in[k] (external left edge)
