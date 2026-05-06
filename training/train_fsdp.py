@@ -55,6 +55,8 @@ class TrainingConfig:
     # Gradient compression (Slice 19)
     use_compression:  bool  = False
     k_pct:            float = 0.1      # fraction of gradients to keep
+    # Allocator integration (Slice 11)
+    log_allocator_stats: bool = False  # log cache_hit_pct + fragmentation_pct every 100 steps
 
 
 def _make_fake_batch(config: TrainingConfig, device: torch.device) -> torch.Tensor:
@@ -118,19 +120,20 @@ def run_training(
       single-device if only 1 GPU is available).
     """
     if dry_run:
-        return [
-            {
-                "step":           i,
-                "loss":           float("nan"),
-                "step_time_ms":   0.0,
-                "gpu_memory_mib": 0.0,
-                "grad_sparsity":  0.0,
-                "allreduce_ms":   0.0,
-                "compute_ms":     0.0,
-                "overlap_pct":    1.0,
-            }
-            for i in range(n_steps)
-        ]
+        base = {
+            "step":           0,
+            "loss":           float("nan"),
+            "step_time_ms":   0.0,
+            "gpu_memory_mib": 0.0,
+            "grad_sparsity":  0.0,
+            "allreduce_ms":   0.0,
+            "compute_ms":     0.0,
+            "overlap_pct":    1.0,
+        }
+        if config.log_allocator_stats:
+            base["allocator_cache_hit_pct"]    = 0.0
+            base["allocator_fragmentation_pct"] = 0.0
+        return [{**base, "step": i} for i in range(n_steps)]
 
     if not torch.cuda.is_available():
         raise RuntimeError("run_training requires CUDA. Use dry_run=True for local testing.")
@@ -188,6 +191,16 @@ def run_training(
         hook = TopKSparsificationHook(k_pct=config.k_pct)
         model.register_comm_hook(state=None, hook=hook)
 
+    # Enable allocator (Slice 11) — must be done before optimizer init
+    _allocator = None
+    if config.log_allocator_stats:
+        try:
+            import axonforge_allocator as _allocator
+            _allocator.enable()
+            _allocator.reset_stats()
+        except ImportError:
+            _allocator = None
+
     optimizer = torch.optim.AdamW(model.parameters(), lr=config.lr)
 
     # Re-seed data generation for determinism
@@ -228,13 +241,24 @@ def run_training(
         step_ms     = (t1 - t0) * 1000
         allreduce_ms = (allreduce_end - allreduce_start) * 1000
 
-        metrics.append(_log_step(
+        m = _log_step(
             step=step,
             loss=loss.item(),
             step_ms=step_ms,
             allreduce_ms=allreduce_ms,
             model=model,
             device=device,
-        ))
+        )
+
+        # Log allocator stats every 100 steps
+        if config.log_allocator_stats and _allocator is not None and step % 100 == 0:
+            stats = _allocator.stats()
+            m["allocator_cache_hit_pct"]    = stats.get("cache_hit_rate_pct", 0.0)
+            m["allocator_fragmentation_pct"] = stats.get("fragmentation_pct", 0.0)
+
+        metrics.append(m)
+
+    if _allocator is not None:
+        _allocator.disable()
 
     return metrics
