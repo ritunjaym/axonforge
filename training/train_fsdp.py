@@ -38,20 +38,23 @@ from training.model import GPT2, GPT2Config, TransformerBlock
 @dataclass
 class TrainingConfig:
     # Model architecture
-    n_layers:    int   = 12
-    n_heads:     int   = 12
-    d_model:     int   = 768
-    d_ff:        int   = 3072
-    vocab_size:  int   = 50257
-    max_seq_len: int   = 1024
-    dropout:     float = 0.1
+    n_layers:         int   = 12
+    n_heads:          int   = 12
+    d_model:          int   = 768
+    d_ff:             int   = 3072
+    vocab_size:       int   = 50257
+    max_seq_len:      int   = 1024
+    dropout:          float = 0.1
     # Training
-    batch_size:  int   = 4
-    lr:          float = 3e-4
-    seed:        int   = 42
+    batch_size:       int   = 4
+    lr:               float = 3e-4
+    seed:             int   = 42
     # Device / precision
-    dtype:       str   = "bf16"    # "fp32" or "bf16"
-    use_fsdp:    bool  = True
+    dtype:            str   = "bf16"    # "fp32" or "bf16"
+    use_fsdp:         bool  = True
+    # Gradient compression (Slice 19)
+    use_compression:  bool  = False
+    k_pct:            float = 0.1      # fraction of gradients to keep
 
 
 def _make_fake_batch(config: TrainingConfig, device: torch.device) -> torch.Tensor:
@@ -178,6 +181,12 @@ def run_training(
             auto_wrap_policy=wrap_policy,
             device_id=device,
         )
+
+    # Register gradient compression hook (Slice 19)
+    if config.use_compression:
+        from training.compression import TopKSparsificationHook
+        hook = TopKSparsificationHook(k_pct=config.k_pct)
+        model.register_comm_hook(state=None, hook=hook)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=config.lr)
 
