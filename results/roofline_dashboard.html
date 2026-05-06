@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AxonForge Roofline Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 1100px; margin: auto; }
+    h2   { border-bottom: 2px solid #333; padding-bottom: 6px; }
+    table{ margin-bottom: 10px; }
+    td, th { padding: 4px 10px; }
+  </style>
+</head>
+<body>
+  <h2>AxonForge — Roofline &amp; Performance Dashboard</h2>
+  <p>Hardware: <b>rtx_3090</b> | Mode: dry-run (synthetic data)</p>
+
+  
+<div id="panel1" style="margin-bottom:40px">
+  <h3>Panel 1 — Roofline Analysis (SwiGLU, rtx_3090)</h3>
+  <p>X-axis: Arithmetic Intensity (FLOP/byte) — Y-axis: Performance (GFLOPS)</p>
+  <p>Ridge point: 38.03 FLOP/byte | Peak: 35600 GFLOPS | BW: 936 GB/s</p>
+  <canvas id="rooflineChart" style="max-width:900px"></canvas>
+  <script>
+    (function() {
+      const kernelPts = [{"label": "pytorch_ref", "x": 0.1667, "y": 8200.0, "pct": 23.0}, {"label": "triton", "x": 0.1667, "y": 28500.0, "pct": 80.0}, {"label": "cuda_ext", "x": 0.1667, "y": 26900.0, "pct": 75.0}];
+      const roofPts   = [{"x": 0.01, "y": 9.36}, {"x": 0.01778279410038923, "y": 16.644695277964317}, {"x": 0.03162277660168379, "y": 29.598918899176027}, {"x": 0.05623413251903491, "y": 52.63514803781668}, {"x": 0.1, "y": 93.60000000000001}, {"x": 0.1778279410038923, "y": 166.4469527796432}, {"x": 0.31622776601683794, "y": 295.98918899176033}, {"x": 0.5623413251903491, "y": 526.3514803781667}, {"x": 1.0, "y": 936.0}, {"x": 1.7782794100389228, "y": 1664.4695277964317}, {"x": 3.1622776601683795, "y": 2959.8918899176033}, {"x": 5.623413251903491, "y": 5263.514803781668}, {"x": 10.0, "y": 9360.0}, {"x": 17.78279410038923, "y": 16644.695277964318}, {"x": 31.622776601683793, "y": 29598.91889917603}, {"x": 56.23413251903491, "y": 35600.0}, {"x": 100.0, "y": 35600.0}, {"x": 177.82794100389228, "y": 35600.0}, {"x": 316.22776601683796, "y": 35600.0}, {"x": 562.341325190349, "y": 35600.0}, {"x": 1000.0, "y": 35600.0}, {"x": 1778.2794100389228, "y": 35600.0}, {"x": 3162.2776601683795, "y": 35600.0}, {"x": 5623.413251903491, "y": 35600.0}, {"x": 10000.0, "y": 35600.0}, {"x": 17782.794100389227, "y": 35600.0}, {"x": 31622.776601683792, "y": 35600.0}, {"x": 56234.13251903491, "y": 35600.0}];
+      const overlay   = [{"label": "before_fusion", "x": 4.5641, "y": 6408.0}, {"label": "after_fusion", "x": 6.0855, "y": 8900.0}];
+      const ctx = document.getElementById('rooflineChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Roofline ceiling',
+              data: roofPts.map(p => ({x: Math.log10(p.x), y: Math.log10(p.y)})),
+              type: 'line', borderColor: '#999', pointRadius: 0, fill: false,
+            },
+            {
+              label: 'Kernels (PyTorch / Triton / CUDA)',
+              data: kernelPts.map(p => ({x: Math.log10(p.x), y: Math.log10(p.y)})),
+              backgroundColor: ['#e74c3c','#3498db','#2ecc71'],
+              pointRadius: 8,
+            },
+            {
+              label: 'Compiler overlay (before/after fusion)',
+              data: overlay.map(p => ({x: Math.log10(p.x), y: Math.log10(p.y)})),
+              backgroundColor: ['#f39c12', '#9b59b6'],
+              pointStyle: 'triangle', pointRadius: 10,
+            },
+          ]
+        },
+        options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const pts = [...kernelPts, ...overlay];
+                  return pts[ctx.dataIndex]?.label || '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { title: { display: true, text: 'log₁₀(Arithmetic Intensity FLOP/byte)' } },
+            y: { title: { display: true, text: 'log₁₀(GFLOPS)' } }
+          }
+        }
+      });
+    })();
+  </script>
+  <table border="1" style="border-collapse:collapse;margin-top:10px">
+    <tr><th>Kernel</th><th>AI (FLOP/byte)</th><th>GFLOPS</th><th>% of peak</th></tr>
+    <tr><td>pytorch_ref</td><td>0.1667</td><td>8200.0</td><td>23.0%</td></tr><tr><td>triton</td><td>0.1667</td><td>28500.0</td><td>80.0%</td></tr><tr><td>cuda_ext</td><td>0.1667</td><td>26900.0</td><td>75.0%</td></tr>
+  </table>
+</div>
+
+  
+<div id="panel2" style="margin-bottom:40px">
+  <h3>Panel 2 — Three-way SwiGLU Benchmark (PyTorch ref / Triton / CUDA)</h3>
+  <table border="1" style="border-collapse:collapse">
+    <tr>
+      <th>Kernel</th><th>N</th>
+      <th>Latency (ms)</th><th>TFLOPS</th>
+      <th>Bandwidth (GB/s)</th><th>% of Peak</th>
+    </tr>
+    <tr><td><b>pytorch_ref</b></td><td>4096</td><td>0.410</td><td>8.20</td><td>180.0</td><td>23.0%</td></tr><tr><td><b>triton</b></td><td>4096</td><td>0.120</td><td>28.50</td><td>620.0</td><td>80.0%</td></tr><tr><td><b>cuda_ext</b></td><td>4096</td><td>0.130</td><td>26.90</td><td>590.0</td><td>75.0%</td></tr>
+  </table>
+  <p><em>Triton vs C++/CUDA gap target: &lt;15%. Both beat PyTorch ref.</em></p>
+</div>
+
+  <div id="panel3"><h3>Panel 3 — Systolic Array PE Heatmap (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
+  <div id="panel4"><h3>Panel 4 — FSDP Scaling + Allocator Time-Series (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
+  <div id="panel5"><h3>Panel 5 — Inference Pareto + Allocator Comparison (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
+
+  <hr>
+  <p><em>Generated by AxonForge profiler/dashboard.py</em></p>
+</body>
+</html>
