@@ -89,9 +89,97 @@
   <p><em>Triton vs C++/CUDA gap target: &lt;15%. Both beat PyTorch ref.</em></p>
 </div>
 
-  <div id="panel3"><h3>Panel 3 — Systolic Array PE Heatmap (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
-  <div id="panel4"><h3>Panel 4 — FSDP Scaling + Allocator Time-Series (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
-  <div id="panel5"><h3>Panel 5 — Inference Pareto + Allocator Comparison (Slice 24)</h3><p><em>Coming in Slice 24.</em></p></div>
+  
+<div id="panel3" style="margin-bottom:40px">
+  <h3>Panel 3 — Systolic Array PE Activity Heatmap (8×8)</h3>
+  <p>Color = utilization (green = high, red = low). Average: 48.5%</p>
+  <table style="border-collapse:collapse">
+    <tr><td style="background:rgb(140,90,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,0]=45.0%">45.0%</td><td style="background:rgb(138,91,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,1]=45.5%">45.5%</td><td style="background:rgb(137,92,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,2]=46.0%">46.0%</td><td style="background:rgb(136,93,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,3]=46.5%">46.5%</td><td style="background:rgb(135,94,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,4]=47.0%">47.0%</td><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,5]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,6]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[0,7]=48.5%">48.5%</td></tr><tr><td style="background:rgb(138,91,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,0]=45.5%">45.5%</td><td style="background:rgb(137,92,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,1]=46.0%">46.0%</td><td style="background:rgb(136,93,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,2]=46.5%">46.5%</td><td style="background:rgb(135,94,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,3]=47.0%">47.0%</td><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,4]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,5]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,6]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[1,7]=49.0%">49.0%</td></tr><tr><td style="background:rgb(137,92,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,0]=46.0%">46.0%</td><td style="background:rgb(136,93,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,1]=46.5%">46.5%</td><td style="background:rgb(135,94,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,2]=47.0%">47.0%</td><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,3]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,4]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,5]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,6]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[2,7]=49.5%">49.5%</td></tr><tr><td style="background:rgb(136,93,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,0]=46.5%">46.5%</td><td style="background:rgb(135,94,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,1]=47.0%">47.0%</td><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,2]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,3]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,4]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,5]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,6]=49.5%">49.5%</td><td style="background:rgb(127,100,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[3,7]=50.0%">50.0%</td></tr><tr><td style="background:rgb(135,94,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,0]=47.0%">47.0%</td><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,1]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,2]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,3]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,4]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,5]=49.5%">49.5%</td><td style="background:rgb(127,100,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,6]=50.0%">50.0%</td><td style="background:rgb(126,101,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[4,7]=50.5%">50.5%</td></tr><tr><td style="background:rgb(133,95,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,0]=47.5%">47.5%</td><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,1]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,2]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,3]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,4]=49.5%">49.5%</td><td style="background:rgb(127,100,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,5]=50.0%">50.0%</td><td style="background:rgb(126,101,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,6]=50.5%">50.5%</td><td style="background:rgb(124,102,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[5,7]=51.0%">51.0%</td></tr><tr><td style="background:rgb(132,96,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,0]=48.0%">48.0%</td><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,1]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,2]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,3]=49.5%">49.5%</td><td style="background:rgb(127,100,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,4]=50.0%">50.0%</td><td style="background:rgb(126,101,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,5]=50.5%">50.5%</td><td style="background:rgb(124,102,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,6]=51.0%">51.0%</td><td style="background:rgb(123,103,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[6,7]=51.5%">51.5%</td></tr><tr><td style="background:rgb(131,97,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,0]=48.5%">48.5%</td><td style="background:rgb(130,98,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,1]=49.0%">49.0%</td><td style="background:rgb(128,99,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,2]=49.5%">49.5%</td><td style="background:rgb(127,100,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,3]=50.0%">50.0%</td><td style="background:rgb(126,101,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,4]=50.5%">50.5%</td><td style="background:rgb(124,102,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,5]=51.0%">51.0%</td><td style="background:rgb(123,103,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,6]=51.5%">51.5%</td><td style="background:rgb(122,104,60);color:white;text-align:center;padding:6px;min-width:40px" title="PE[7,7]=52.0%">52.0%</td></tr><tr></tr>
+  </table>
+  <p><em>Utilization = active_mac_cycles / steady_state_cycles per PE row.</em></p>
+</div>
+
+  
+<div id="panel4" style="margin-bottom:40px">
+  <h3>Panel 4 — FSDP Scaling + Allocator Cache Hit / Fragmentation</h3>
+  <canvas id="scalingChart" style="max-width:700px;display:block;margin-bottom:20px"></canvas>
+  <canvas id="allocChart"   style="max-width:700px;display:block"></canvas>
+  <script>
+    (function() {
+      const gpus   = [1, 2, 4];
+      const strong = [1.0, 0.94, 0.88];
+      const weak   = [1.0, 0.97, 0.92];
+      const steps  = [0, 100, 200, 300, 400];
+      const hit    = [0.0, 62.3, 68.1, 71.4, 72.8];
+      const frag   = [0.0, 8.2, 9.1, 9.5, 9.7];
+
+      new Chart(document.getElementById('scalingChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: gpus.map(g => g + ' GPU'),
+          datasets: [
+            { label: 'Strong scaling efficiency', data: strong, borderColor: '#3498db', fill: false },
+            { label: 'Weak scaling efficiency',   data: weak,   borderColor: '#2ecc71', fill: false },
+            { label: 'Linear (ideal)',            data: gpus.map(() => 1.0), borderColor:'#999', borderDash:[5,5], fill:false },
+          ]
+        },
+        options: { scales: { y: { min: 0, max: 1.1, title: { display:true, text:'Scaling efficiency' } },
+                               x: { title: { display:true, text:'GPU count' } } } }
+      });
+
+      new Chart(document.getElementById('allocChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: steps.map(s => 'step ' + s),
+          datasets: [
+            { label: 'Cache hit rate (%)',       data: hit,  borderColor: '#27ae60', fill: false },
+            { label: 'Fragmentation (%)',         data: frag, borderColor: '#e74c3c', fill: false },
+          ]
+        },
+        options: { scales: { y: { min: 0, max: 100, title: { display:true, text:'%' } } } }
+      });
+    })();
+  </script>
+  <p>Target: scaling efficiency ≥ 0.8× at 4 GPU. Allocator cache hit &gt; 70% training.</p>
+</div>
+
+  
+<div id="panel5" style="margin-bottom:40px">
+  <h3>Panel 5 — Inference Pareto + Allocator Hit Rate (Training vs Inference)</h3>
+  <canvas id="paretoChart" style="max-width:700px;display:block;margin-bottom:20px"></canvas>
+  <script>
+    (function() {
+      const pts = [{"x": 5.2, "y": 24615, "label": "bs=1"}, {"x": 7.1, "y": 36056, "label": "bs=2"}, {"x": 9.8, "y": 52245, "label": "bs=4"}, {"x": 14.3, "y": 71678, "label": "bs=8 \u2b50"}, {"x": 27.9, "y": 73477, "label": "bs=16"}];
+      new Chart(document.getElementById('paretoChart').getContext('2d'), {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Inference configs (⭐ = knee)',
+            data: pts.map(p => ({x:p.x, y:p.y})),
+            backgroundColor: pts.map(p => p.label.includes('⭐') ? '#e74c3c' : '#3498db'),
+            pointRadius: 7,
+          }]
+        },
+        options: {
+          plugins: { tooltip: { callbacks: { label: (ctx) => pts[ctx.dataIndex].label } } },
+          scales: {
+            x: { title: { display:true, text:'p50 Latency (ms)' } },
+            y: { title: { display:true, text:'Throughput (tokens/s)' } },
+          }
+        }
+      });
+    })();
+  </script>
+  <h4>Allocator Cache Hit Rate: Training vs Inference</h4>
+  <table border="1" style="border-collapse:collapse">
+    <tr><th>Mode</th><th>Cache Hit Rate</th><th>Notes</th></tr>
+    <tr><td>Training</td><td>72.8%</td><td>Irregular FSDP allocs → lower hit rate</td></tr>
+    <tr><td>Inference</td><td>93.5%</td><td>Fixed shapes → high cache reuse</td></tr>
+  </table>
+  <p>Inference hit rate target: &gt;90% (fixed-shape batches reuse pooled memory aggressively).
+     Motivates different pool sizing on Inferentia vs Trainium.</p>
+</div>
+
 
   <hr>
   <p><em>Generated by AxonForge profiler/dashboard.py</em></p>
